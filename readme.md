@@ -1,6 +1,6 @@
 # PawnPay Merchant API
-[![Latest Version on Packagist][ico-version]][link-packagist]
-[![Software License][ico-license]](LICENSE.md)
+[![Latest Version on Packagist][https://img.shields.io/packagist/vpre/dewbud/cardconnect]][https://packagist.org/packages/dewbud/cardconnect]
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## About
 An API adapter for [gateway.pawn-pay.com](gateway.pawn-pay.com)
@@ -42,7 +42,7 @@ $ composer require pawnpay/merchant_api
 ```
 
 ## Usage
-For a full list of the API specs please see our [API Documentation](https://dev.gateway.pawn-pay.com/docs/api/v1#merchant)
+For a full list of the API specs please see our [API Documentation](https://gateway.pawn-pay.com/docs/api/v1#merchant)
 ### Initialize
 ```php
 <?php
@@ -59,7 +59,7 @@ $client = new MerchantClient(
 ```
 ### Create Payer
 ```php
-$payer = $client->createPayer([
+$response = $client->createPayer([
     'name'    => 'Johnny Test',
     'email'   => 'j.test@example.com',
     'phone'   => '+19544941234',
@@ -72,11 +72,11 @@ $payer = $client->createPayer([
     ],
 ]);
 
-$payer_id = $payer->id;
+$payer_id = $response->payer->id;
 ```
 ### Update Payer
 ```php
-$payer = $client->updatePayer($payer_id, [
+$response = $client->updatePayer($payer_id, [
     'name'    => 'Johnny Test',
     'email'   => 'j.test@example.com',
     'phone'   => '+19544941234',
@@ -95,7 +95,7 @@ $success = $client->deletePayer($payer_id);
 ```
 ### Create Payment Method
 ```php
-$method = $client->createMethod($payer_id, [
+$response = $client->createMethod($payer_id, [
     'name'         => 'Test Visa',
     'type'         => 'credit',
     'sub_type'     => 'visa',
@@ -111,11 +111,11 @@ $method = $client->createMethod($payer_id, [
         'country' => 'USA',
     ],
 ]);
-$method_id = $method->id;
+$method_id = $response->method->id;
 ```
 ### Update Payment Method
 ```php
-$method = $client->updateMethod($method_id, [
+$response = $client->updateMethod($method_id, [
     'name'    => 'Test Update',
     'address' => [
         'street' => '43211 Test St.',
@@ -124,7 +124,8 @@ $method = $client->updateMethod($method_id, [
 ```
 ### Get Payment Methods
 ```php
-$methods = $client->getMethods($payer_id);
+$response = $client->getMethods($payer_id);
+$methods = $response->methods;
 ```
 ### Delete Payment Method
 ```php
@@ -132,7 +133,7 @@ $success = $client->deleteMethod($method_id);
 ```
 ### Authorize Transaction
 ```php
-$transaction = $client->authorize([
+$response = $client->authorize([
     'amount'   => 1134,
     'currency' => 'USD',
     'payer'    => [
@@ -179,15 +180,15 @@ $transaction = $client->authorize([
     ],
 ]);
 
-$trans_id = $transaction->id;
+$trans_id = $response->transaction->id;
 ```
 ### Capture Transaction
 ```php
-$transaction = $client->capture($trans_id);
+$response = $client->capture($trans_id);
 ```
 ### Process Transaction
 ```php
-$transaction = $client->process([
+$response = $client->process([
     'amount'   => 1134,
     'currency' => 'USD',
     'payer'    => [
@@ -234,28 +235,28 @@ $transaction = $client->process([
     ],
 ]);
 
-$trans_id = $transaction->id;
+$trans_id = $response->transaction->id;
 ```
 ### Reverse Transaction
 ```php
-$transaction = $client->reverse($trans_id);
+$response = $client->reverse($trans_id);
 ```
 ### Get Transaction
 ```php
-$transaction = $client->getTransaction($trans_id);
+$response = $client->getTransaction($trans_id);
 ```
 ### Create Webhook
 ```php
-$webhook = $client->createWebhook(
+$response = $client->createWebhook(
     'transaction.created',
     'https://www.example.com/webhooks'
 );
 
-$hook_id = $webhook->id;
+$hook_id = $response->webhook->id;
 ```
 ### Update Webhook
 ```php
-$webhook = $client->updateWebhook(
+$response = $client->updateWebhook(
     $hook_id,
     'transaction.created',
     'https://www.example.com/webhooks'
@@ -263,7 +264,7 @@ $webhook = $client->updateWebhook(
 ```
 ### Get Webhook
 ```php
-$webhook = $client->getWebhook($hook_id);
+$response = $client->getWebhook($hook_id);
 ```
 ### Delete Webhook
 ```php
@@ -271,7 +272,8 @@ $success = $client->deleteWebhook($hook_id);
 ```
 ### List Webhooks
 ```php
-$webhooks = $client->listWebhooks('transaction.created');
+$response = $client->listWebhooks('transaction.created');
+$webhooks = $response->webhooks;
 ```
 ### Validate Webhook
 ```php
@@ -282,10 +284,20 @@ $request_signature = $_SERVER['HTTP_SIGNATURE'];
 $valid = $client->validateWebhook($timestamp, $token, $request_signature);
 ```
 ### Debugging
-The last request and response are stored as arrays in the MerchantClient instance.
+The raw HTTP Client response which implements `\Psr\Http\Message\ResponseInterface` is accessible in each response.
+This contains all the information about the response, status codes, headers, etc.
+```php
+$response = $client->getPayer($payer_id);
+
+$raw_response = $response->getRawResponse();
+
+$status = $raw_response->getStatusCode();
+$body = $raw_response->getBody();
+$headers = $raw_response->getHeaders();
+```
+The last request is stored as an array in the MerchantClient instance.
 ```php
 $last_request = $client->getLastRequest();
-$last_response = $client->getLastResponse();
 ```
 
 ## Testing

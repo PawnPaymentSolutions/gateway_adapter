@@ -2,8 +2,21 @@
 
 namespace Tests;
 
+use PawnPay\Merchant\Models\Payer;
+use PawnPay\Merchant\Responses\Payer as PayerResponse;
+
 class PayersTest extends TestCase
 {
+    /**
+     * @test
+     */
+    public function handles_failures_gracefully()
+    {
+        $response = self::$CLIENT->createPayer([]);
+
+        $this->assertFalse($response->success, $this->dumpClient());
+    }
+
     /**
      * @test
      */
@@ -11,7 +24,7 @@ class PayersTest extends TestCase
     {
         $request = [
             'name'    => 'Johnny Test',
-            'email'   => 'j.test@example.com',
+            'email'   => static::$FAKER->safeEmail,
             'phone'   => '+19544941234',
             'address' => [
                 'street'  => '1234 Test St.',
@@ -22,13 +35,13 @@ class PayersTest extends TestCase
             ],
         ];
 
-        $payer = self::$CLIENT->createPayer($request);
+        $response = self::$CLIENT->createPayer($request);
 
-        $last_response = self::$CLIENT->getLastResponse();
+        $this->assertTrue($response->success, $this->dumpClient());
+        $this->assertInstanceOf(PayerResponse::class, $response);
+        $this->assertInstanceOf(Payer::class, $response->payer);
 
-        $this->assertEquals(201, $last_response['status'], $this->dumpClient());
-
-        return $payer->id;
+        return $response->payer->id;
     }
 
     /**
@@ -44,11 +57,11 @@ class PayersTest extends TestCase
             ],
         ];
 
-        $payer = self::$CLIENT->updatePayer($payer_id, $request);
+        $response = self::$CLIENT->updatePayer($payer_id, $request);
 
-        $last_response = self::$CLIENT->getLastResponse();
-
-        $this->assertEquals(200, $last_response['status'], $this->dumpClient());
+        $this->assertTrue($response->success, $this->dumpClient());
+        $this->assertInstanceOf(PayerResponse::class, $response);
+        $this->assertInstanceOf(Payer::class, $response->payer);
     }
 
     /**

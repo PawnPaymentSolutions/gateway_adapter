@@ -4,6 +4,12 @@ namespace PawnPay\Merchant;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
+use PawnPay\Merchant\Responses\Method;
+use PawnPay\Merchant\Responses\Methods;
+use PawnPay\Merchant\Responses\Payer;
+use PawnPay\Merchant\Responses\Transaction;
+use PawnPay\Merchant\Responses\Webhook;
+use PawnPay\Merchant\Responses\Webhooks;
 
 /**
  * @see https://gateway.pawn-pay.com/docs/api/v1#merchant
@@ -65,13 +71,9 @@ class MerchantClient
      */
     public function testAuth()
     {
-        try {
-            $this->request('GET', '');
-        } catch (ClientException $th) {
-            return false;
-        }
+        $response = $this->request('GET', '');
 
-        return 200 === $this->last_response['status'];
+        return 200 === $response->getStatusCode();
     }
 
     /**
@@ -81,13 +83,13 @@ class MerchantClient
      *
      * @param array $payer
      *
-     * @return \PawnPay\Merchant\Response
+     * @return \PawnPay\Merchant\Responses\Payer
      */
     public function createPayer(array $payer)
     {
-        $payer = $this->request('POST', 'payers', $payer);
+        $response = $this->request('POST', 'payers', $payer);
 
-        return new Response($payer);
+        return new Payer($response);
     }
 
     /**
@@ -98,13 +100,13 @@ class MerchantClient
      * @param string $payer_id
      * @param array  $payer
      *
-     * @return \PawnPay\Merchant\Response
+     * @return \PawnPay\Merchant\Responses\Payer
      */
     public function updatePayer(string $payer_id, array $payer)
     {
-        $payer = $this->request('PATCH', "payers/{$payer_id}", $payer);
+        $response = $this->request('PATCH', "payers/{$payer_id}", $payer);
 
-        return new Response($payer);
+        return new Payer($response);
     }
 
     /**
@@ -118,13 +120,9 @@ class MerchantClient
      */
     public function deletePayer(string $payer_id)
     {
-        try {
-            $this->request('DELETE', "payers/{$payer_id}");
-        } catch (ClientException $th) {
-            return false;
-        }
+        $response = $this->request('DELETE', "payers/{$payer_id}");
 
-        return 204 === $this->last_response['status'];
+        return 204 === $response->getStatusCode();
     }
 
     /**
@@ -136,13 +134,13 @@ class MerchantClient
      * @param string $payer_id
      * @param array  $method
      *
-     * @return \PawnPay\Merchant\Response
+     * @return \PawnPay\Merchant\Responses\Method
      */
     public function createMethod(string $payer_id, array $method)
     {
-        $method = $this->request('POST', "payers/{$payer_id}/methods", $method);
+        $response = $this->request('POST', "payers/{$payer_id}/methods", $method);
 
-        return new Response($method);
+        return new Method($response);
     }
 
     /**
@@ -153,13 +151,13 @@ class MerchantClient
      * @param string $method_id
      * @param array  $method
      *
-     * @return \PawnPay\Merchant\Response
+     * @return \PawnPay\Merchant\Responses\Method
      */
     public function updateMethod(string $method_id, array $method)
     {
-        $method = $this->request('PATCH', "methods/{$method_id}", $method);
+        $response = $this->request('PATCH', "methods/{$method_id}", $method);
 
-        return new Response($method);
+        return new Method($response);
     }
 
     /**
@@ -173,9 +171,9 @@ class MerchantClient
      */
     public function deleteMethod(string $method_id)
     {
-        $method = $this->request('DELETE', "methods/{$method_id}");
+        $response = $this->request('DELETE', "methods/{$method_id}");
 
-        return 204 === $this->last_response['status'];
+        return 204 === $response->getStatusCode();
     }
 
     /**
@@ -185,19 +183,13 @@ class MerchantClient
      *
      * @param string $payer_id
      *
-     * @return \PawnPay\Merchant\Response[]
+     * @return \PawnPay\Merchant\Responses\Methods
      */
     public function getMethods(string $payer_id)
     {
-        $res = $this->request('GET', "payers/{$payer_id}/methods");
+        $response = $this->request('GET', "payers/{$payer_id}/methods");
 
-        $methods = [];
-
-        foreach ($res as $method) {
-            $methods[] = new Response($method);
-        }
-
-        return $methods;
+        return new Methods($response);
     }
 
     /**
@@ -207,13 +199,13 @@ class MerchantClient
      *
      * @param array $request
      *
-     * @return \PawnPay\Merchant\Response
+     * @return \PawnPay\Merchant\Responses\Transaction
      */
     public function authorize(array $request)
     {
-        $trans = $this->request('POST', 'transactions/authorize', $request);
+        $response = $this->request('POST', 'transactions/authorize', $request);
 
-        return new Response($trans);
+        return new Transaction($response);
     }
 
     /**
@@ -224,13 +216,13 @@ class MerchantClient
      * @param string $trans_id
      * @param array  $request
      *
-     * @return \PawnPay\Merchant\Response
+     * @return \PawnPay\Merchant\Responses\Transaction
      */
     public function capture(string $trans_id, array $request = [])
     {
-        $trans = $this->request('POST', "transactions/{$trans_id}/capture", $request);
+        $response = $this->request('POST', "transactions/{$trans_id}/capture", $request);
 
-        return new Response($trans);
+        return new Transaction($response);
     }
 
     /**
@@ -240,13 +232,13 @@ class MerchantClient
      *
      * @param array $request
      *
-     * @return \PawnPay\Merchant\Response
+     * @return \PawnPay\Merchant\Responses\Transaction
      */
     public function process(array $request = [])
     {
-        $trans = $this->request('POST', 'transactions', $request);
+        $response = $this->request('POST', 'transactions', $request);
 
-        return new Response($trans);
+        return new Transaction($response);
     }
 
     /**
@@ -256,13 +248,13 @@ class MerchantClient
      *
      * @param string $trans_id
      *
-     * @return \PawnPay\Merchant\Response
+     * @return \PawnPay\Merchant\Responses\Transaction
      */
     public function getTransaction(string $trans_id)
     {
-        $trans = $this->request('GET', "transactions/{$trans_id}");
+        $response = $this->request('GET', "transactions/{$trans_id}");
 
-        return new Response($trans);
+        return new Transaction($response);
     }
 
     /**
@@ -273,13 +265,13 @@ class MerchantClient
      * @param string $trans_id
      * @param array  $request
      *
-     * @return \PawnPay\Merchant\Response
+     * @return \PawnPay\Merchant\Responses\Transaction
      */
     public function reverse(string $trans_id, array $request = [])
     {
-        $trans = $this->request('POST', "transactions/{$trans_id}/reverse", $request);
+        $response = $this->request('POST', "transactions/{$trans_id}/reverse", $request);
 
-        return new Response($trans);
+        return new Transaction($response);
     }
 
     /**
@@ -288,7 +280,7 @@ class MerchantClient
      * @param array  $request
      * @param array  $options
      *
-     * @return array
+     * @return \Psr\Http\Message\ResponseInterface
      */
     public function request(
         string $method,
@@ -297,7 +289,6 @@ class MerchantClient
         array $options = []
     ) {
         $options = array_merge([
-            // 'allow_redirects' => false,
             'auth'            => [$this->merchant_id, $this->merchant_key],
             'headers'         => [
                 'User-Agent'   => "{$this->user_agent} v{$this->version}",
@@ -317,7 +308,11 @@ class MerchantClient
             'body'    => $request,
         ];
 
-        $res = $this->client->request($method, $resource, $options);
+        try {
+            $res = $this->client->request($method, $resource, $options);
+        } catch (ClientException $ex) {
+            return $ex->getResponse();
+        }
 
         $body = \json_decode($res->getBody(), true);
 
@@ -327,7 +322,7 @@ class MerchantClient
             'body'    => $body,
         ];
 
-        return $body;
+        return $res;
     }
 
     /**
@@ -338,16 +333,16 @@ class MerchantClient
      * @param string $event_type
      * @param string $url
      *
-     * @return \PawnPay\Merchant\Response
+     * @return \PawnPay\Merchant\Responses\Webhook
      */
     public function createWebhook(string $event_type, string $url)
     {
-        $hook = $this->request('POST', 'webhooks', [
+        $response = $this->request('POST', 'webhooks', [
             'event_type' => $event_type,
             'url'        => $url,
         ]);
 
-        return new Response($hook);
+        return new Webhook($response);
     }
 
     /**
@@ -359,16 +354,16 @@ class MerchantClient
      * @param string $event_type
      * @param string $url
      *
-     * @return \PawnPay\Merchant\Response
+     * @return \PawnPay\Merchant\Responses\Webhook
      */
     public function updateWebhook(string $webhook_id, string $event_type, string $url)
     {
-        $hook = $this->request('PATCH', "webhooks/{$webhook_id}", [
+        $response = $this->request('PATCH', "webhooks/{$webhook_id}", [
             'event_type' => $event_type,
             'url'        => $url,
         ]);
 
-        return new Response($hook);
+        return new Webhook($response);
     }
 
     /**
@@ -394,13 +389,13 @@ class MerchantClient
      *
      * @param string $webhook_id
      *
-     * @return \PawnPay\Merchant\Response
+     * @return \PawnPay\Merchant\Responses\Webhook
      */
     public function getWebhook(string $webhook_id)
     {
-        $hook = $this->request('GET', "webhooks/{$webhook_id}");
+        $response = $this->request('GET', "webhooks/{$webhook_id}");
 
-        return new Response($hook);
+        return new Webhook($response);
     }
 
     /**
@@ -410,19 +405,13 @@ class MerchantClient
      *
      * @param string $event_type
      *
-     * @return \PawnPay\Merchant\Response[]
+     * @return \PawnPay\Merchant\Responses\Webhooks
      */
     public function listWebhooks(string $event_type)
     {
         $response = $this->request('GET', "webhooks/events/{$event_type}");
 
-        $hooks = [];
-
-        foreach ($response as $hook) {
-            $hooks[] = new Response($hook);
-        }
-
-        return $hooks;
+        return new Webhooks($response);
     }
 
     /**

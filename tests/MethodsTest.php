@@ -2,6 +2,10 @@
 
 namespace Tests;
 
+use PawnPay\Merchant\Models\PaymentMethod;
+use PawnPay\Merchant\Responses\Method as MethodResponse;
+use PawnPay\Merchant\Responses\Methods as MethodsResponse;
+
 class MethodsTest extends TestCase
 {
     /**
@@ -13,12 +17,12 @@ class MethodsTest extends TestCase
     {
         parent::setUpBeforeClass();
 
-        $payer = static::$CLIENT->createPayer([
+        $response = static::$CLIENT->createPayer([
             'name'    => 'Test Payer',
-            'email'   => 'test.payer@example.com',
+            'email'   => static::$FAKER->safeEmail,
         ]);
 
-        static::$PAYER_ID = $payer->id;
+        static::$PAYER_ID = $response->payer->id;
     }
 
     public static function tearDownAfterClass(): void
@@ -50,13 +54,13 @@ class MethodsTest extends TestCase
             ],
         ];
 
-        $method = self::$CLIENT->createMethod(static::$PAYER_ID, $request);
+        $response = self::$CLIENT->createMethod(static::$PAYER_ID, $request);
 
-        $last_response = self::$CLIENT->getLastResponse();
+        $this->assertTrue($response->success, $this->dumpClient());
+        $this->assertInstanceOf(MethodResponse::class, $response);
+        $this->assertInstanceOf(PaymentMethod::class, $response->method);
 
-        $this->assertEquals(201, $last_response['status'], $this->dumpClient());
-
-        return $method->id;
+        return $response->method->id;
     }
 
     /**
@@ -80,13 +84,13 @@ class MethodsTest extends TestCase
             ],
         ];
 
-        $method = self::$CLIENT->createMethod(static::$PAYER_ID, $request);
+        $response = self::$CLIENT->createMethod(static::$PAYER_ID, $request);
 
-        $last_response = self::$CLIENT->getLastResponse();
+        $this->assertTrue($response->success, $this->dumpClient());
+        $this->assertInstanceOf(MethodResponse::class, $response);
+        $this->assertInstanceOf(PaymentMethod::class, $response->method);
 
-        $this->assertEquals(201, $last_response['status'], $this->dumpClient());
-
-        return $method->id;
+        return $response->method->id;
     }
 
     /**
@@ -102,11 +106,11 @@ class MethodsTest extends TestCase
             ],
         ];
 
-        $method = static::$CLIENT->updateMethod($method_id, $request);
+        $response = static::$CLIENT->updateMethod($method_id, $request);
 
-        $last_response = self::$CLIENT->getLastResponse();
-
-        $this->assertEquals(200, $last_response['status'], $this->dumpClient());
+        $this->assertTrue($response->success, $this->dumpClient());
+        $this->assertInstanceOf(MethodResponse::class, $response);
+        $this->assertInstanceOf(PaymentMethod::class, $response->method);
     }
 
     /**
@@ -114,13 +118,12 @@ class MethodsTest extends TestCase
      */
     public function gets_payment_methods()
     {
-        $methods = static::$CLIENT->getMethods(static::$PAYER_ID);
+        $response = static::$CLIENT->getMethods(static::$PAYER_ID);
 
-        $this->assertIsArray($methods);
-
-        $last_response = self::$CLIENT->getLastResponse();
-
-        $this->assertEquals(200, $last_response['status'], $this->dumpClient());
+        $this->assertTrue($response->success, $this->dumpClient());
+        $this->assertInstanceOf(MethodsResponse::class, $response);
+        $this->assertIsArray($response->methods);
+        $this->assertInstanceOf(PaymentMethod::class, $response->methods[0]);
     }
 
     /**

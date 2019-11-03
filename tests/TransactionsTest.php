@@ -2,6 +2,9 @@
 
 namespace Tests;
 
+use PawnPay\Merchant\Models\Transaction;
+use PawnPay\Merchant\Responses\Transaction as TransactionResponse;
+
 class TransactionsTest extends TestCase
 {
     /**
@@ -9,7 +12,7 @@ class TransactionsTest extends TestCase
      */
     public function authorizes_transactions()
     {
-        $transaction = static::$CLIENT->authorize([
+        $response = static::$CLIENT->authorize([
             'amount'   => 1134,
             'currency' => 'USD',
             'payer'    => [
@@ -47,11 +50,11 @@ class TransactionsTest extends TestCase
             ],
         ]);
 
-        $last_response = self::$CLIENT->getLastResponse();
+        $this->assertTrue($response->success, $this->dumpClient());
+        $this->assertInstanceOf(TransactionResponse::class, $response);
+        $this->assertInstanceOf(Transaction::class, $response->transaction);
 
-        $this->assertEquals(201, $last_response['status'], $this->dumpClient());
-
-        return $transaction->id;
+        return $response->transaction->id;
     }
 
     /**
@@ -60,11 +63,11 @@ class TransactionsTest extends TestCase
      */
     public function captures_transactions(string $transaction_id)
     {
-        $transaction = static::$CLIENT->capture($transaction_id);
+        $response = static::$CLIENT->capture($transaction_id);
 
-        $last_response = self::$CLIENT->getLastResponse();
-
-        $this->assertEquals(200, $last_response['status'], $this->dumpClient());
+        $this->assertTrue($response->success, $this->dumpClient());
+        $this->assertInstanceOf(TransactionResponse::class, $response);
+        $this->assertInstanceOf(Transaction::class, $response->transaction);
     }
 
     /**
@@ -73,11 +76,11 @@ class TransactionsTest extends TestCase
      */
     public function gets_transactions(string $transaction_id)
     {
-        $transaction = static::$CLIENT->getTransaction($transaction_id);
+        $response = static::$CLIENT->getTransaction($transaction_id);
 
-        $last_response = self::$CLIENT->getLastResponse();
-
-        $this->assertEquals(200, $last_response['status'], $this->dumpClient());
+        $this->assertTrue($response->success, $this->dumpClient());
+        $this->assertInstanceOf(TransactionResponse::class, $response);
+        $this->assertInstanceOf(Transaction::class, $response->transaction);
     }
 
     /**
@@ -85,7 +88,7 @@ class TransactionsTest extends TestCase
      */
     public function processes_transactions()
     {
-        $transaction = static::$CLIENT->process([
+        $response = static::$CLIENT->process([
             'amount'   => 1134,
             'currency' => 'USD',
             'payer'    => [
@@ -123,11 +126,11 @@ class TransactionsTest extends TestCase
             ],
         ]);
 
-        $last_response = self::$CLIENT->getLastResponse();
+        $this->assertTrue($response->success, $this->dumpClient());
+        $this->assertInstanceOf(TransactionResponse::class, $response);
+        $this->assertInstanceOf(Transaction::class, $response->transaction);
 
-        $this->assertEquals(201, $last_response['status'], $this->dumpClient());
-
-        return $transaction->id;
+        return $response->transaction->id;
     }
 
     /**
@@ -136,10 +139,10 @@ class TransactionsTest extends TestCase
      */
     public function reverses_transactions(string $transaction_id)
     {
-        $transaction = static::$CLIENT->reverse($transaction_id);
+        $response = static::$CLIENT->reverse($transaction_id);
 
-        $last_response = self::$CLIENT->getLastResponse();
-
-        $this->assertEquals(200, $last_response['status'], $this->dumpClient());
+        $this->assertTrue($response->success, $this->dumpClient());
+        $this->assertInstanceOf(TransactionResponse::class, $response);
+        $this->assertInstanceOf(Transaction::class, $response->transaction);
     }
 }

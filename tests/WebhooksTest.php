@@ -2,6 +2,10 @@
 
 namespace Tests;
 
+use PawnPay\Merchant\Models\Webhook;
+use PawnPay\Merchant\Responses\Webhook as WebhookResponse;
+use PawnPay\Merchant\Responses\Webhooks as WebhooksResponse;
+
 class WebhooksTest extends TestCase
 {
     /**
@@ -9,13 +13,13 @@ class WebhooksTest extends TestCase
      */
     public function creates_webhooks()
     {
-        $hook = static::$CLIENT->createWebhook('transaction.created', 'https://gateway.pawn-pay.com/webhooks');
+        $response = static::$CLIENT->createWebhook('transaction.created', 'https://gateway.pawn-pay.com/webhooks');
 
-        $last_response = self::$CLIENT->getLastResponse();
+        $this->assertTrue($response->success, $this->dumpClient());
+        $this->assertInstanceOf(WebhookResponse::class, $response);
+        $this->assertInstanceOf(Webhook::class, $response->webhook);
 
-        $this->assertEquals(201, $last_response['status'], $this->dumpClient());
-
-        return $hook->id;
+        return $response->webhook->id;
     }
 
     /**
@@ -24,11 +28,11 @@ class WebhooksTest extends TestCase
      */
     public function gets_webhooks(string $hook_id)
     {
-        $hook = self::$CLIENT->getWebhook($hook_id);
+        $response = self::$CLIENT->getWebhook($hook_id);
 
-        $last_response = self::$CLIENT->getLastResponse();
-
-        $this->assertEquals(200, $last_response['status'], $this->dumpClient());
+        $this->assertTrue($response->success, $this->dumpClient());
+        $this->assertInstanceOf(WebhookResponse::class, $response);
+        $this->assertInstanceOf(Webhook::class, $response->webhook);
     }
 
     /**
@@ -37,15 +41,15 @@ class WebhooksTest extends TestCase
      */
     public function updates_webhooks(string $hook_id)
     {
-        $hook = self::$CLIENT->updateWebhook(
+        $response = self::$CLIENT->updateWebhook(
             $hook_id,
             'transaction.created',
             'https://gateway.pawn-pay.com/webhooks2'
         );
 
-        $last_response = self::$CLIENT->getLastResponse();
-
-        $this->assertEquals(200, $last_response['status'], $this->dumpClient());
+        $this->assertTrue($response->success, $this->dumpClient());
+        $this->assertInstanceOf(WebhookResponse::class, $response);
+        $this->assertInstanceOf(Webhook::class, $response->webhook);
     }
 
     /**
@@ -53,11 +57,12 @@ class WebhooksTest extends TestCase
      */
     public function lists_webhooks()
     {
-        $hooks = self::$CLIENT->listWebhooks('transaction.created');
+        $response = self::$CLIENT->listWebhooks('transaction.created');
 
-        $last_response = self::$CLIENT->getLastResponse();
-
-        $this->assertEquals(200, $last_response['status'], $this->dumpClient());
+        $this->assertTrue($response->success, $this->dumpClient());
+        $this->assertInstanceOf(WebhooksResponse::class, $response);
+        $this->assertIsArray($response->webhooks);
+        $this->assertInstanceOf(Webhook::class, $response->webhooks[0]);
     }
 
     /**

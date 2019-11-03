@@ -60,7 +60,25 @@ class Fluent implements ArrayAccess, JsonSerializable
      */
     public function toArray()
     {
-        return $this->attributes;
+        $attrs = $this->attributes;
+
+        foreach ($attrs as $key => $value) {
+            if (method_exists($value, 'toArray')) {
+                $attrs[$key] = $value->toArray();
+            } elseif (is_array($value)) {
+                $children = [];
+                foreach ($value as $k => $v) {
+                    if (method_exists($v, 'toArray')) {
+                        $children[$k] = $v->toArray();
+                    } else {
+                        $children[$k] = $v;
+                    }
+                }
+                $attrs[$k] = $children;
+            }
+        }
+
+        return $attrs;
     }
 
     /**
