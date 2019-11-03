@@ -1,5 +1,5 @@
 # PawnPay Merchant API
-[![Latest Version on Packagist][https://img.shields.io/packagist/vpre/dewbud/cardconnect]][https://packagist.org/packages/dewbud/cardconnect]
+[![Latest Version on Packagist](https://img.shields.io/packagist/vpre/pawnpay/merchant_api)](https://packagist.org/packages/dewbud/cardconnect])
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## About
@@ -9,6 +9,7 @@ An API adapter for [gateway.pawn-pay.com](gateway.pawn-pay.com)
 - [Installation](#installation)
 - [Usage](#usage)
     - [Initialize](#initialize)
+    - [Checking For Success](#checking-for-success)
     - Payers
         - [Create Payer](#create-payer)
         - [Update Payer](#update-payer)
@@ -56,6 +57,16 @@ $client = new MerchantClient(
     'merchant_secret',
     'https://gateway.pawn-pay.com/api/v1/merchant/'
 );
+```
+### Checking For Success
+Validate the request completed successfully
+```php
+<?php
+$response = $client->createPayer([
+    'this is' => 'totally wrong',
+]);
+
+$response->success === false;
 ```
 ### Create Payer
 ```php
