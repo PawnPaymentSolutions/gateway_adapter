@@ -1,0 +1,6 @@
+.env
+*.cache
+.DS_Store
+/tests/coverage
+/vendor
+/.vscode
