@@ -1,5 +1,5 @@
 # PawnPay Merchant API
-[![Latest Version on Packagist](https://img.shields.io/packagist/vpre/pawnpay/merchant_api)](https://packagist.org/packages/pawnpay/merchant_api])
+[![Latest Version on Packagist](https://img.shields.io/packagist/vpre/pawnpay/merchant_api)](https://packagist.org/packages/pawnpay/merchant_api)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## About
