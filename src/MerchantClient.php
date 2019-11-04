@@ -44,7 +44,7 @@ class MerchantClient
     protected $user_agent = 'PawnPay-PHP-M';
 
     /** @var string */
-    protected $version = '0.1';
+    protected $version = '1.0';
 
     public function __construct(
         string $merchant_id,
