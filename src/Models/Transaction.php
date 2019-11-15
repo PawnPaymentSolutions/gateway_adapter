@@ -15,6 +15,10 @@ use PawnPay\Merchant\Fluent;
  * @property string                           $settled_at
  * @property string                           $payer_id
  * @property string                           $method_id
+ * @property float                            $charge_rate
+ * @property int                              $trans_fee
+ * @property int                              $cost
+ * @property int                              $net
  * @property \PawnPay\Merchant\Models\Invoice $invoice
  */
 class Transaction extends Fluent
