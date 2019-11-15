@@ -25,6 +25,9 @@ An API adapter for [gateway.pawn-pay.com](gateway.pawn-pay.com)
         - [Process Transaction](#process-transaction)
         - [Reverse Transaction](#reverse-transaction)
         - [Get Transaction](#get-transaction)
+    - Batches
+        - [Get Batches](#get-batches)
+        - [Get Batch Transactions](#batch-transactions)
     - Webhooks
         - [Create Webhook](#create-webhook)
         - [Update Webhook](#update-webhook)
@@ -255,6 +258,16 @@ $response = $client->reverse($trans_id);
 ### Get Transaction
 ```php
 $response = $client->getTransaction($trans_id);
+```
+### Get Batches
+```php
+$response = $client->listBatches();
+$batch_id = $response->batches[0]->id;
+```
+### Batch Transactions
+```php
+$response = $client->getBatch($batch_id);
+$first_tran = $response->transactions[0];
 ```
 ### Create Webhook
 ```php
