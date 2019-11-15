@@ -4,6 +4,8 @@ namespace PawnPay\Merchant;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
+use PawnPay\Merchant\Responses\Batches;
+use PawnPay\Merchant\Responses\BatchTransactions;
 use PawnPay\Merchant\Responses\Method;
 use PawnPay\Merchant\Responses\Methods;
 use PawnPay\Merchant\Responses\Payer;
@@ -430,6 +432,36 @@ class MerchantClient
         $computed_signature = hash_hmac('sha256', $token.$timestamp, $this->merchant_secret);
 
         return hash_equals($computed_signature, $signature);
+    }
+
+    /**
+     * Get the transactions in a batch.
+     *
+     * @see https://gateway.pawn-pay.com/docs/api/v1#get-batch
+     *
+     * @param int $batch_id
+     *
+     * @return \PawnPay\Merchant\Responses\BatchTransactions
+     */
+    public function getBatch(int $batch_id)
+    {
+        $response = $this->request('GET', "batches/{$batch_id}");
+
+        return new BatchTransactions($response);
+    }
+
+    /**
+     * Get all batches.
+     *
+     * @see https://gateway.pawn-pay.com/docs/api/v1#get-batches
+     *
+     * @return \PawnPay\Merchant\Responses\Batches
+     */
+    public function listBatches()
+    {
+        $response = $this->request('GET', 'batches');
+
+        return new Batches($response);
     }
 
     /**
