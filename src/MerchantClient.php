@@ -313,7 +313,7 @@ class MerchantClient
         try {
             $res = $this->client->request($method, $resource, $options);
         } catch (ClientException $ex) {
-            return $ex->getResponse();
+            $res = $ex->getResponse();
         }
 
         $body = \json_decode($res->getBody(), true);
