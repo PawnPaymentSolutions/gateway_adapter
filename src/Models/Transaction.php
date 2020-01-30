@@ -27,6 +27,8 @@ class Transaction extends Fluent
     {
         parent::__construct($attributes);
 
-        $this->invoice = new Invoice($this->invoice ? $this->invoice->toArray() : []);
+        $has_invoice = array_key_exists('invoice', $attributes) && is_array($attributes['invoice']);
+
+        $this->invoice = new Invoice($has_invoice ? $attributes['invoice'] : []);
     }
 }
