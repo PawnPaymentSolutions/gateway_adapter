@@ -27,6 +27,6 @@ class Transaction extends Fluent
     {
         parent::__construct($attributes);
 
-        $this->invoice = new Invoice($this->invoice);
+        $this->invoice = new Invoice($this->invoice ? $this->invoice->toArray() : []);
     }
 }
