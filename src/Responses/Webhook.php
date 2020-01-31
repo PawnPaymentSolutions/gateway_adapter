@@ -11,18 +11,15 @@ class Webhook extends Response
     /**
      * @var \PawnPay\Merchant\Models\Webhook
      */
-    public $webhook;
+    public $webhook = null;
 
     public function __construct(ResponseInterface $response = null)
     {
         parent::__construct($response);
 
-        $data = [];
-
         if ($this->success) {
-            $data = \json_decode($this->raw_response->getBody(), true);
+            $data          = \json_decode($this->raw_response->getBody(), true);
+            $this->webhook = new WebhookModel($data);
         }
-
-        $this->webhook = new WebhookModel($data);
     }
 }

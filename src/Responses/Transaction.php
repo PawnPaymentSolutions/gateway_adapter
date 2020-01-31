@@ -11,18 +11,15 @@ class Transaction extends Response
     /**
      * @var \PawnPay\Merchant\Models\Transaction
      */
-    public $transaction;
+    public $transaction = null;
 
     public function __construct(ResponseInterface $response = null)
     {
         parent::__construct($response);
 
-        $data = [];
-
         if ($this->success) {
-            $data = \json_decode($this->raw_response->getBody(), true);
+            $data              = \json_decode($this->raw_response->getBody(), true);
+            $this->transaction = new TransModel($data);
         }
-
-        $this->transaction = new TransModel($data);
     }
 }

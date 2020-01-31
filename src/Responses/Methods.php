@@ -11,20 +11,18 @@ class Methods extends Response
     /**
      * @var \PawnPay\Merchant\Models\PaymentMethod[]
      */
-    public $methods = [];
+    public $methods = null;
 
     public function __construct(ResponseInterface $response = null)
     {
         parent::__construct($response);
 
-        $data = [];
-
         if ($this->success) {
-            $data = \json_decode($this->raw_response->getBody(), true);
-        }
-
-        foreach ($data as $method) {
-            $this->methods[] = new MethodModel($method);
+            $this->methods = [];
+            $data          = \json_decode($this->raw_response->getBody(), true);
+            foreach ($data as $method) {
+                $this->methods[] = new MethodModel($method);
+            }
         }
     }
 }

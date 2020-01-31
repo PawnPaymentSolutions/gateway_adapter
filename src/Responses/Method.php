@@ -17,12 +17,9 @@ class Method extends Response
     {
         parent::__construct($response);
 
-        $data = [];
-
         if ($this->success) {
-            $data = \json_decode($this->raw_response->getBody(), true);
+            $data         = \json_decode($this->raw_response->getBody(), true);
+            $this->method = new MethodModel($data);
         }
-
-        $this->method = new MethodModel($data);
     }
 }

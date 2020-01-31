@@ -11,18 +11,15 @@ class Payer extends Response
     /**
      * @var \PawnPay\Merchant\Models\Payer
      */
-    public $payer;
+    public $payer = null;
 
     public function __construct(ResponseInterface $response = null)
     {
         parent::__construct($response);
 
-        $data = [];
-
         if ($this->success) {
-            $data = \json_decode($this->raw_response->getBody(), true);
+            $data        = \json_decode($this->raw_response->getBody(), true);
+            $this->payer = new PayerModel($data);
         }
-
-        $this->payer = new PayerModel($data);
     }
 }

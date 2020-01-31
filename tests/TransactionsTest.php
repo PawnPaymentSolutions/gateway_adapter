@@ -59,6 +59,22 @@ class TransactionsTest extends TestCase
 
     /**
      * @test
+     */
+    public function handles_failures_gracefully()
+    {
+        $response = static::$CLIENT->authorize([
+            'amount'   => 'FEED_ME_ERRORS',
+        ]);
+
+        $this->assertFalse($response->success, $this->dumpClient());
+        $this->assertInstanceOf(TransactionResponse::class, $response);
+        $this->assertNotNull($response->message);
+        $this->assertNotNull($response->errors);
+        $this->assertIsArray($response->errors);
+    }
+
+    /**
+     * @test
      * @depends authorizes_transactions
      */
     public function captures_transactions(string $transaction_id)

@@ -11,20 +11,18 @@ class BatchTransactions extends Response
     /**
      * @var \PawnPay\Merchant\Models\Transaction[]
      */
-    public $transactions = [];
+    public $transactions = null;
 
     public function __construct(ResponseInterface $response = null)
     {
         parent::__construct($response);
 
-        $data = [];
-
         if ($this->success) {
-            $data = \json_decode($this->raw_response->getBody(), true);
-        }
-
-        foreach ($data as $tran) {
-            $this->transactions[] = new Transaction($tran);
+            $this->transactions = [];
+            $data               = \json_decode($this->raw_response->getBody(), true);
+            foreach ($data as $tran) {
+                $this->transactions[] = new Transaction($tran);
+            }
         }
     }
 }
