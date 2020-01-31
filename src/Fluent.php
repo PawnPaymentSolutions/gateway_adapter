@@ -74,7 +74,7 @@ class Fluent implements ArrayAccess, JsonSerializable
                         $children[$k] = $v;
                     }
                 }
-                $attrs[$k] = $children;
+                $attrs[$key] = $children;
             }
         }
 
