@@ -1,41 +1,41 @@
 {
-    "name": "pawnpay/merchant_api",
-    "description": "An API adapter for gateway.pawn-pay.com",
-    "type": "library",
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "PawnPay",
-            "email": "developers@pawn-pay.com"
-        }
-    ],
-    "require": {
-        "php": ">=7.3.0",
-        "ext-json": "*",
-        "guzzlehttp/guzzle": "^6.3"
-    },
-    "require-dev": {
-      "friendsofphp/php-cs-fixer": "^2.15",
-      "fzaninotto/faker": "^1.4",
-      "phpunit/phpunit": "^8.3",
-      "vlucas/phpdotenv": "^3.5"
-    },
-    "autoload": {
-      "psr-4": {
-        "PawnPay\\Merchant\\": "src/"
-      }
-    },
-    "autoload-dev": {
-      "psr-4": {
-        "Tests\\": "tests/"
-      }
-    },
-    "scripts": {
-      "lint": [
-        "php-cs-fixer fix --config ./.php_cs"
-      ],
-      "test": [
-        "phpunit --colors=always --testdox"
-      ]
+  "name": "pawnpay/merchant_api",
+  "description": "An API adapter for gateway.pawn-pay.com",
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "PawnPay",
+      "email": "developers@pawn-pay.com"
     }
+  ],
+  "require": {
+    "php": ">=7.3.0",
+    "ext-json": "*",
+    "guzzlehttp/guzzle": ">=6.3"
+  },
+  "require-dev": {
+    "friendsofphp/php-cs-fixer": "^2.15",
+    "fzaninotto/faker": "^1.4",
+    "phpunit/phpunit": "^9.0",
+    "vlucas/phpdotenv": "^3.5"
+  },
+  "autoload": {
+    "psr-4": {
+      "PawnPay\\Merchant\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Tests\\": "tests/"
+    }
+  },
+  "scripts": {
+    "lint": [
+      "php-cs-fixer fix --config ./.php_cs"
+    ],
+    "test": [
+      "phpunit --colors=always --testdox"
+    ]
+  }
 }
