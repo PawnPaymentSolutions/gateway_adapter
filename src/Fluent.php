@@ -63,7 +63,7 @@ class Fluent implements ArrayAccess, JsonSerializable
         $attrs = $this->attributes;
 
         foreach ($attrs as $key => $value) {
-            if (method_exists($value, 'toArray')) {
+            if (is_object($value) && method_exists($value, 'toArray')) {
                 $attrs[$key] = $value->toArray();
             } elseif (is_array($value)) {
                 $children = [];
